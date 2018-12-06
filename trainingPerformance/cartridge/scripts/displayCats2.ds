@@ -1,0 +1,33 @@
+/**
+*   @input ProductSearchModel : dw.catalog.ProductSearchModel
+*   @output outputCategories : dw.util.ArrayList
+*
+*/
+importPackage( dw.system );
+importPackage (dw.catalog );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+	var searchcats : dw.util.ArrayList = new dw.util.ArrayList();
+	
+	for each (var flref: ProductSearchRefinementValue in
+		args.ProductSearchModel.refinements.getNextLevelCategoryRefinementValues(args.ProductSearchModel.category)) {
+		var flcat : Category = dw.catalog.CatalogMgr.getCategory(flref.value);
+		
+		for each (var slref : ProductSearchRefinementValue in
+			args.ProductSearchModel.refinements.getNextLevelCategoryRefinementValues(flcat)) {
+			var slcat : Category = CatalogMgr.getCategory(slref.value);
+			
+			for each (var tlref : ProductSearchRefinementValue in
+				args.ProductSearchModel.refinements.getNextLevelCategoryRefinementValues(slcat)) {
+				var tlcat: dw.catalog.Category = dw.catalog.CatalogMgr.getCategory(tlref.value);
+				searchcats.add(tlcat.ID);
+			}
+			searchcats.add(slcat.ID);
+		}
+		searchcats.add(flcat.ID);
+		}
+    args.outputCategories=searchcats;
+   return PIPELET_NEXT;
+}

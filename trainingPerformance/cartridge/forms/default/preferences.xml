@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<form>
+    <field formid="interestApparel" label="forms.interestedinApparel" type="boolean"  binding="custom.interestApparel" />
+    <field formid="interestElectronics" label="forms.contactus.lastname.label" type="boolean"  binding="custom.lastName" />
+    <field formid="email" label="forms.contactus.email.label" type="boolean" 	
+    	binding="custom.email" 
+    	/>  
+	
+	<action formid="subscribe" valid-form="true"/>
+</form>

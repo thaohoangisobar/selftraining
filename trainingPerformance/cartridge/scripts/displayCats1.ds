@@ -1,0 +1,60 @@
+/**
+*
+*   @input ExampleIn : String This is a sample comment.
+*   @output outputCategories : dw.util.ArrayList
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+     // get root category of current site's navigation catalog
+     var siteCatalog:Catalog = CatalogMgr.getSiteCatalog();
+     var root:Category = null;
+     if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+     
+     var cats : dw.util.ArrayList = new dw.util.ArrayList();
+     var slcat:Category;
+     var tlcat:Category;
+     var flcat:Category;
+     
+     for each ( flcat in root.getOnlineSubCategories()) {
+           for each ( slcat  in flcat.getOnlineSubCategories()) {
+                for each ( tlcat  in slcat.getOnlineSubCategories()) {
+                     if(checkProduct(tlcat)) {
+                     cats.add(tlcat.ID);
+                     if(!cats.contains(slcat.ID)) cats.add(slcat.ID);
+                     if(!cats.contains(flcat.ID)) cats.add(flcat.ID);
+                     }
+                }
+                }
+           if(checkProduct(slcat)) {
+                if(!cats.contains(slcat.ID)) cats.add(slcat.ID);
+                if(!cats.contains(flcat.ID)) cats.add(flcat.ID);
+           }
+           if (checkProduct(flcat)) if(!cats.contains(flcat.ID)) cats.add(flcat.ID);
+     
+     }
+    
+    args.outputCategories=cats; 	    
+     return PIPELET_NEXT;
+}  
+     
+
+     
+     
+     
+     // Function looks for orderable product in a category
+     function checkProduct(category:Category) : Boolean {
+           
+           for (var i= 0; i < category.onlineProducts.length; i++) {
+                var product : Product = category.onlineProducts[i];
+                if (product.availabilityModel.orderable) {
+                     return true;
+                }
+           }
+           return false;
+     }
+ 

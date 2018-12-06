@@ -1,0 +1,8 @@
+<!--- TEMPLATENAME: displayCats2.isml --->
+
+<isloop items="${pdict.outputCategories}" var="oneCategory" status="statusVar" >
+
+     category ${statusVar.count}  : ${oneCategory}<br> 
+      
+
+</isloop>

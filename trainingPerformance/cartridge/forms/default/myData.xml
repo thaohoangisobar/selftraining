@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+    <field formid="fname" label="Enter First Name" type="string" mandatory="true" binding="custom.firstName" />
+	<action formid="subscribe" valid-form="true"/>
+</form>

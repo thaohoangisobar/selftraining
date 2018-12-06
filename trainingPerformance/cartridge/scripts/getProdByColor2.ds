@@ -1,0 +1,43 @@
+/**
+*   @input ProductSearchModel : dw.catalog.ProductSearchModel 
+*   @output prodDone : dw.util.ArrayList
+*
+*/
+importPackage( dw.system );
+importPackage(dw.util);
+importPackage(dw.catalog);
+
+function execute( pdict : PipelineDictionary ) : Number
+{    
+	pdict.prodDone=new dw.util.ArrayList();
+     pdict.ProductSearchModel.setCategoryID('root');
+    pdict.ProductSearchModel.search();
+     var prds : dw.util.Iterator = pdict.ProductSearchModel.productSearchHits;
+     
+     while (prds.hasNext()) {
+           var prd : dw.catalog.ProductSearchHit = prds.next();
+           
+           // if the product is not maaster/variant, add the product ID
+           // if the product is master/variant without color variation, add the master ID
+           if(!prd.product.master && !prd.product.variant
+                || prd.product.variationModel.getProductVariationAttribute('color') == null) {
+                //do something here with prd.product
+                pdict.prodDone.add(prd.product);
+                
+           // else for each orderable color variation, add an ID from the master ID + color value
+           }else{
+                var va : dw.catalog.ProductVariationAttribute = prd.product.variationModel.getProductVariationAttribute('color');
+                for each (var vav : ProductVariationAttributeValue in prd.getRepresentedVariationValues(va)) {
+                     var productObject : Product;
+                     for each(var variant : Product in prd.representedProducts) {
+                           if(variant.custom.color == vav.value) productObject = variant;
+                           break;
+                     }
+                     // Do something here with productObject
+                      // trace("the productObject is "+productObject.name);
+                      pdict.prodDone.add(productObject);
+                }
+           }
+     }
+   return PIPELET_NEXT;
+}

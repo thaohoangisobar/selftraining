@@ -1,0 +1,6 @@
+<!--- TEMPLATENAME: getProdByColor.isml --->
+
+<isloop items="${pdict.prodDone}" var="eachProductId">
+   ${eachProductId}<br>
+
+ </isloop>

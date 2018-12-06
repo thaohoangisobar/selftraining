@@ -1,0 +1,48 @@
+
+/**
+*
+*   @output prodDone : dw.util.ArrayList
+*
+*/
+
+importPackage( dw.system );
+importPackage(dw.util);
+importPackage(dw.catalog);
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+     var productIterator : SeekableIterator = dw.catalog.ProductMgr.queryAllSiteProducts();
+     var prodDone : dw.util.ArrayList = new dw.util.ArrayList();
+     
+     while(productIterator.hasNext()) {
+     
+           var product : Product = productIterator.next();
+           var productIDColor : String;
+           var color : String;
+     
+           if(!product.master) {
+     
+                // if the product is not a variant, add the product ID
+                // if the product is a variant without color variations, add the master ID
+                if(!product.variant || product.variant && empty(product.custom.color)) {
+                     productIDColor = product.variant ? product.master.ID : product.ID;
+                
+                // else create an ID from the (master) product ID + color value
+                }else if (product.variant) {
+                     color = product.custom.color;
+                     var master : dw.catalog.Product = product.variationModel.master;
+                     productIDColor = master.ID + color;
+                }
+           
+                // if the list does not contain the ID, add it to the list
+                if (!empty(productIDColor) && !prodDone.contains(productIDColor) && product.availabilityModel.orderable) {
+                     // execute some code to add this product to the feed
+                     prodDone.add(productIDColor);
+                }
+           }
+     }
+
+
+   return PIPELET_NEXT;
+}
